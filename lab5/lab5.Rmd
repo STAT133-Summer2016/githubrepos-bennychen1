@@ -1,0 +1,126 @@
+---
+title: "lab4"
+author: "Benny Chen"
+date: "June 13, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(stringr)
+library(readr)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Getting Help for Packages
+
+You can see what an entire package has to offer with
+```{r}
+help(package = "stringr") 
+```
+
+
+## Counting number of vowels
+
+Consider the following vector `letrs` which contains various letters:
+```{r}
+# Garbage string
+letrs <- "gfngenodgsyctyviqyyigeinyngbkwjdjqkrrollhpxdkfldlytympmcgmjynihusebtq"
+```
+
+If you were to count the number of vowels in `letrs` you would get the following counts:
+
+- a: 0
+- e: 3
+- i: 4
+- o: 2
+- u: 1
+
+This exercise will guide you through how to arrive at this frequency table.
+
+```{r}
+# Create a character vector of vowels.  Give it an appropriate name.
+words <- "aaeeiioouuu"
+
+# Use str_count to get the counts.  Assign this an appropriate name.
+vowel_count <- str_count(words,c("a","e","i","o","u"))
+names(vowel_count) <- c("a","e","i","o","u")
+vowel_count
+# Give each element of the vector a name using the names function.
+# The result should look like:
+# a e i o u
+# 0 3 4 2 1
+```
+
+## Exploring new functions: str_pad
+Write a short description of what each of the following calls of `str_pad` is doing.  The last three examples were found at the bottom of the function's documentation.
+
+1. In this call of `str_pad`, __YOUR DESCRIPTION__.
+```{r}
+str_pad("a", width = 4, side = "left", pad = "x")
+```
+A string is created with four characters. All the characters starting from the left are x until there is one "a" as the fourth character. 
+2. In this call of `str_pad`, __YOUR DESCRIPTION__.
+```{r}
+str_pad("a", width = 3, side = "left")
+```
+A string is created with 3 characters. The other characters are spaces, which is the default of the pad function. 
+3. In this call of `str_pad`, __YOUR DESCRIPTION__.
+```{r}
+str_pad(c("a", "abc", "abcdef"), 10)
+```
+There are three character vectors created and each have a length of 10. The strings in the argument appear in the last positions.
+
+4. In this call of `str_pad`, __YOUR DESCRIPTION__.
+```{r}
+str_pad("a", c(5, 10, 20))
+```
+The function is applied to the string "a" three times, creating 3 vectors, with the first with 5 characters, the second with 10 characters, and the third wuth 20 characters.
+5. In this call of `str_pad`, __YOUR DESCRIPTION__.
+```{r}
+str_pad("a", 10, pad = c("-", "_", " "))
+```
+Three vectors of length ten are created. In the first case, the fist nine spaces and filled with a hyphen, in the second with a underscores, and the third with an empty space. 
+
+## Regular Expressions
+We read in the data from the csv file and extract the names column
+```{r}
+flags <- read_csv("flags.csv")
+countries <- flags$name
+```
+
+You may have noticed that in the `countries` vector, words in a country's name are separated by `-`.  Use `str_replace_all` to replace the hyphens with spaces.  For example `"Vatican-City"` should be replaced with `"Vatican City"`
+
+```{r}
+str_replace_all(countries,"-"," ")
+```
+
+Use `str_detect` to see if there are any countries with the world "island" in them, ignoring case.  You may also want to look up how to use `ignore.case`.
+
+```{r}
+any(str_detect(countries,".*(Island).*"))
+```
+
+Use `str_subset` to find all countries that begin with a capital `A`.
+```{r}
+str_subset(countries,"^[A]")
+```
+
+Find all countries that end with `stan`
+```{r}
+str_subset(countries,"stan$")
+```
+
+Use `str_replace_all` to replace the `$`'s in `baws` with `s`'s.  Recall that the `$` is a metacharacter.
+```{r}
+baws <- "Bo$$"
+str_replace_all(baws, "\\$", "s")
+```
+
+Use a character class (denoted by square brackets) to find all countries beginning with a vowel and ending with a consonant.
+```{r}
+str_subset(countries,"^[AEIOU].*[^aeiouAEIOU]$")
+```
+
+
+
+
