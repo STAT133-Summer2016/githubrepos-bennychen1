@@ -1,6 +1,6 @@
 ---
 title: "Strings and Functions"
-author: 
+author: "Benny Chen"
 output: html_document
 ---
 
@@ -57,56 +57,67 @@ Generate a character vector named `files100` containing 100 files names of the f
 Do not use any looping constructions (we haven't covered this yet, and they're slower in `R` for this task).
 
 ```{r}
-# Problem 1
-
+library(stringr)
+x <- 1:100
+y <- as.character(x)
+z <- str_pad(y,3,"left",pad="0")
+files100 <- c(paste("plot",z,".png",sep="",collapse=", "))
+files100
 ```
 
 ### Problem 2 - USA States Names (8 pts)
 
 One of the datasets that comes with R is `USArrests`. The row names of this data set correspond to the 50 states. This next problem refers to the following vector:
-
 ```{r}
 states <- rownames(USArrests)
 ```
 
 1. How many states contain the letter `i`?
 ```{r}
-
+states_with_i <- str_subset(states,"[Ii]")
+length(states_with_i)
 ```
 
 2. How many states do not contain the letter `a`?
 ```{r}
-
+states_with_a <- str_subset(states,"^[^Aa]*$")
+length(states_with_a)
 ```
 
 3. Which states contain the letter `j`?
 ```{r}
-
+states_with_j <- str_subset(states,"[Jj]")
+states_with_j
 ```
 
 4. Which states are formed by two words?
 ```{r}
-
+states_formed_by_two_words <- str_subset(states," ")
+states_formed_by_two_words
 ```
 
 5. Which states start with `W` and end with a consonant (non-vowel)?
 ```{r}
-
+states_start_with_w <- str_subset(states,"^[W].*[^aeiouy]$")
+states_start_with_w
 ```
 
 6. Which states contain at least three `i`'s (e.g. Illinois)?
 ```{r}
-
+states_with_3_i <- str_subset(states,"(.*[Ii]){3,}")
+states_with_3_i
 ```
 
 7. Which states contain five vowels (e.g. California)?
 ```{r}
-
+states_with_five_vowels <- str_subset(states,"^([^aeiou]*[aeiou][^aeiou]*){5}$")
+states_with_five_vowels
 ```
 
 8. Which states contain three consecutive vowels (e.g. Hawaii)?
 ```{r}
-
+states_with_three_consecutive_vowels <- str_subset(states,"[^aeiou]*([aeiou]){3}")
+states_with_three_consecutive_vowels
 ```
 
 ### Problem 3 Colors in Hexadecimal Notation (4 pts)
@@ -114,11 +125,13 @@ states <- rownames(USArrests)
 Write a function `is_hex()` that checks whether the input is a valid color in hexadecimal notation. A hex color starts with a hash `#` symbol followed by six hexadecimal digits: 0 to 9, and the first six letters A, B, C, D, E, F. Your function should not distinguish between upper and lower case letters.
 
 ```{r}
-# is_hex()
+is_hex <- function(hex) {
+  str_detect(hex,"#[0-9|a-zA-z]{6}")
+}
 ```
 
 Change `eval` to `TRUE` to test your function.
-```{r, eval=FALSE}
+```{r, eval=T}
 is_hex("#ff0000")  # TRUE
 is_hex("#123456")  # TRUE
 is_hex("#12Fb56")  # TRUE
@@ -133,11 +146,14 @@ is_hex("blue")     # FALSE
 Write a function that reverses a string by characters. You may find the `rev` function useful.
 
 ```{r}
-# reverse_chars()
+reverse_chars <- function(word){
+  w <- c(strsplit(word,NULL)[[1]])
+  paste(rev(w),sep="",collapse="")
+}
 ```
 
 Change `eval` to `TRUE` to test your function.
-```{r, eval=FALSE}
+```{r, eval=T}
 reverse_chars("Rictusempra")
 reverse_chars("Lumox Maxima")
 reverse_chars("Repello Muggletum")
@@ -156,21 +172,23 @@ Your job is to write a function `remove_tag` that takes a vector of text from an
 * `<kingdom>Plantae<\kingdom>` is converted to `Plantae`
 
 ```{r}
-# Your code
+remove_tag <- function(tag){
+   str_replace_all(tag,"(<.*?>)","")
+}
 ```
 
 Test your code:
-```{r, eval = F}
-phylo <- c("<common>dandelion<\common>",
-           "<genus>Taraxacum<\genus>",
-           "<kingdom>Plantae<\kingdom>")
+```{r, eval = T}
+phylo <- c("<common>dandelion</common>",
+           "<genus>Taraxacum</genus>",
+           "<kingdom>Plantae</kingdom>")
 remove_tag(phylo)
 ```
 
 ### Problem 6 - Processing DNA (12 points)
 
 Our genetic blueprint, DNA, consists of nucleotides each composed of a sugar, deoxyribose; a phosphate group; and one of four nitrogen-containing nucleobases: cytosine (C), guanine (G), adenine (A), and thymine (T).  Simplifying the biology a little (ok, a lot), every three bases in a corresponds to an amino acid, a building block for proteins.  For example, the triplets `TTT-CTT-ATT` corresponds to the amino acids _Phenylalanine_, _Leucine_, and _Isoleucine_, which is then abbreviated as `F-L-I`.  
-
+ 
 That's the extent of the biology you need to know, but if you want to read more of the technicalities, [see this wikipedia article for more information.](https://en.wikipedia.org/wiki/DNA_codon_table)  We ignore START codons in this problem.
 
 A csv file of the DNA to amino acid conversion is given with the homework.  Use a relative path from your `hw2` directory to load that data frame in with the `read_csv` function in the `readr` package.
