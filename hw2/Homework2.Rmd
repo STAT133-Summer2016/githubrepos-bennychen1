@@ -167,9 +167,9 @@ Rarely does text data come clean enough for immediate use.  In this exercise, yo
 ```
 Your job is to write a function `remove_tag` that takes a vector of text from an XML document and removes the tags, returning a character vector with only the data values.  So, for example:
 
-* `<common>dandelion<\common>` is converted to `dandelion`
-* `<genus>Taraxacum<\genus>` is converted to `Taraxacum`
-* `<kingdom>Plantae<\kingdom>` is converted to `Plantae`
+* `<common>dandelion</common>` is converted to `dandelion`
+* `<genus>Taraxacum</genus>` is converted to `Taraxacum`
+* `<kingdom>Plantae</kingdom>` is converted to `Plantae`
 
 ```{r}
 remove_tag <- function(tag){
@@ -192,6 +192,12 @@ Our genetic blueprint, DNA, consists of nucleotides each composed of a sugar, de
 That's the extent of the biology you need to know, but if you want to read more of the technicalities, [see this wikipedia article for more information.](https://en.wikipedia.org/wiki/DNA_codon_table)  We ignore START codons in this problem.
 
 A csv file of the DNA to amino acid conversion is given with the homework.  Use a relative path from your `hw2` directory to load that data frame in with the `read_csv` function in the `readr` package.
+```{r}
+library(readr) 
+codons <- read_csv("codons")
+library(stringr)
+
+```
 
 Write a function `dna_to_aa` that converts a sequence of DNA given as a string into a sequence of amino acids.  If the sequence contains an invalid DNA character (something outside CGAT), your function should return an error stating "Invalid DNA sequence".
 
@@ -201,11 +207,29 @@ Hints:
 * `str_replace_all` can take a named vector as one of its arguments.
 
 ```{r}
-# dna_to_aa()
+library(readr)
+codons <- read_csv("codons")
+library(stringr)
+amino <- codons[["amino_acid"]]
+dna <- codons[["dna_triplet"]]
+dna <- as.character(dna)
+amino <- as.character(amino)
+dna_to_aa <- function(x){
+  if(str_detect(x,"^[CGAT]+$")){
+  a <- amino
+  names(a) <- dna
+  y <- substring(x,seq(1,nchar(x),3),seq(3,nchar(x),3))
+  s <- str_replace_all(y,a,amino[which((dna %in% y))])
+  s <- str_c(s,sep="",collapse="")
+  s
+  } else {
+    "Invalid DNA sequence"
+  }
+}
 ```
 
 Test your function:
-```{r, eval = F}
+```{r, eval = T}
 dna_to_aa("GAGCCATGCATT") # "EPCI"
 dna_to_aa("ATCTAGATAGTAGGC") # "IStopIVG"
 dna_to_aa("UCUGAGAAU") # "Invalid DNA sequence"
