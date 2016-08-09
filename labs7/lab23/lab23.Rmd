@@ -1,0 +1,58 @@
+---
+title: "lab23"
+author: "Benny Chen"
+date: "July 20, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(jsonlite)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+library(maps)
+```
+
+
+## GeoJSON and Earthquakes
+
+The United States Geological Survey (USGS) keeps a public running record of detected earthquakes on its website, updated once every 15 minutes.  Included with this lab is the earthquake data for the past 30 days as of 6am today.  Your task is to spatially display all the earthquakes in the continental US.  You should somehow represent the magnitude of the earthquakes in your visualization.
+
+```{r}
+earthquakes_json <- fromJSON("C:/stat133-su2016/23-lesson/lab/all_month.geojson")
+
+earthquakes_props <- earthquakes_json[["features"]][["properties"]] %>%
+  select(mag, place)
+
+earthquakes_geom <- earthquakes_json[["features"]][["geometry"]] %>%
+  select(coordinates)
+
+states <- rownames(USArrests)
+states[51] <- "CA"
+
+earthquakes <- cbind(earthquakes_props, earthquakes_geom) %>%
+  mutate(place = str_replace_all(place, ".*, ", "")) %>%
+  filter(place %in% states, place != "Alaska", place != "Hawaii") %>%
+  mutate(coordinates = as.character(coordinates),
+         coordinates = str_replace_all(coordinates, "c[(]", ""),
+         coordinates = str_replace_all(coordinates, "[)]", "")) %>%
+  separate(coordinates, c("long", "lat", "x"), sep = ",") %>%
+  mutate(long = as.numeric(long), lat = as.numeric(lat), mag = as.numeric(mag)) %>%
+  select(-x) %>%
+  slice(-1039)
+
+usa <- map_data("usa")
+usa_map <- ggplot(usa) + 
+  geom_polygon(aes(x = long, y = lat, group = group), 
+               fill = NA, color = "red") + 
+  coord_fixed(1.3)
+usa_map + geom_point(data = earthquakes, aes(x = long, y = lat,fill = mag),
+                     shape = 21) +
+  scale_fill_gradient(trans= "log10")
+```
+

@@ -1,0 +1,118 @@
+---
+title: "lab1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Answer the following questions programmatically.  You should submit a `.R` file to bCourses and upload a copy of your work to your GitHub account.
+
+# Data
+Here is some data about the Raiders during a particular superbowl season
+
+```{r raiders}
+scored <- c(14, 14, 9, 14, 28, 13, 13, 24, 17, 6, 24, 0, 24, 13, 26, 14)
+against <- c(19, 30, 16, 38, 31, 24, 23, 30, 41, 13, 20, 52, 13, 31, 24, 47)
+```
+
+# Part 1
+These questions refer to the vector `scored`
+
+1. How many points did the Raiders score in game 7?
+```{r}
+scored[7]
+```
+
+2. What was the score of the first 5 games?
+```{r}
+scored[c(1:5)]
+```
+3. What were the scores of the even games? Try to do this problem without typing in c(2,4,...)
+```{r}
+scored[c(seq(2,length(scored),2))]
+```
+
+4. What was the score of the last game? Try to do this problem without typing in the number of the last game.
+```{r}
+tail(scored,1)
+```
+
+5. Select the scores higher than 14.
+```{r}
+scored[scored>14]
+```
+
+6. Select the scores equal to 14.
+```{r}
+scored[scored==14]
+```
+
+7. Select the scores equal to 13 or 14.
+```{r}
+scored[scored==13 | scored ==14]
+```
+8. Select the scores between between 7 and 21 points.
+```{r}
+scored[scored>7 & scored < 21]
+```
+
+9. Sort the scores in decreasing order.
+```{r}
+sort(scored,decreasing=T)
+```
+10. What was the highest score achieved?
+```{r}
+head(sort(scored,decreasing=T),1)
+```
+
+11. What was the lowest score achieved?
+```{r}
+head(sort(scored),1)
+```
+
+12. What was the average score?
+```{r}
+mean(scored)
+```
+
+13. Use the `summary()` function to give some summary statistics.
+```{r}
+summary(scored)
+```
+
+14. In how many games did the Raiders score over 20 points?
+```{r}
+length(scored[scored>20])
+```
+
+
+# Part 2
+These questions refer to both vectors.
+
+1. What was the sum of the scores in game 7?
+```{r}
+scored[7]+against[7]
+```
+
+2. What was the sum of the scores in each of the last 5 games?
+```{r}
+tail(scored,5) +tail(against,5)
+```
+
+3. What was the difference in scores in each of the odd games?
+```{r}
+scored[c(seq(1,length(scored),2))] - against[c(seq(1,length(scored),2))]
+```
+
+4. Which games did the Raiders win?
+```{r}
+which(scored > against)
+```
+
+5. Were there any ties?
+```{r}
+length(scored[scored == against])
+```
+
